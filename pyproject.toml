@@ -20,6 +20,7 @@ statsmodels = "*"
 geopandas = "^1.1.1"
 notebook = "^7.5.0"
 pyarrow = "^22.0.0"
+torch-geometric = "^2.7.0"
 
 [build-system]
 requires = ["poetry-core"]

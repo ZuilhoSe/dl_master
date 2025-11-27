@@ -3,6 +3,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import json
+import os
+from tqdm import tqdm
+from viz import save_fig
+
 
 sns.set_theme(style="whitegrid")
 plt.rcParams["figure.figsize"] = (12, 6)
@@ -21,7 +25,7 @@ def load_processed_data():
     return df, config
 
 
-def plot_target_distributions(df, targets):
+def plot_target_distributions(df, targets, save = False):
     """Checks if the targets (R0, Alpha, Beta) follow a reasonable distribution."""
     print("\nPlotting Target Distributions")
 
@@ -36,11 +40,14 @@ def plot_target_distributions(df, targets):
             axes[i].set_title(f"Distribution of {target} (Unique City-Years)")
             axes[i].set_xlabel(target)
 
+    if save:
+        save_fig(fig, "../reports/images", "target_distributions")
+
     plt.tight_layout()
     plt.show()
 
 
-def analyze_tda_features(df):
+def analyze_tda_features(df, save = False):
     """
     Investigates if Topological features correlate with epidemic intensity.
     Hypothesis: Higher TDA Amplitude (H1) should correlate with higher Total Cases.
@@ -75,10 +82,13 @@ def analyze_tda_features(df):
     )
     ax[1].set_title("TDA Entropy (H1) vs. R0")
 
+    if save:
+        save_fig(fig, "../reports/images", "tda_features")
+
     plt.show()
 
 
-def visualize_single_city_series(df, geocode=None):
+def visualize_single_city_series(df, geocode=None, save = False):
     """Visualizes the time series of inputs and the broadcasted target for one city."""
     print("\nVisualizing Single City Dynamics")
 
@@ -105,6 +115,10 @@ def visualize_single_city_series(df, geocode=None):
 
     plt.title(f"Dynamics for City {geocode}: Weekly Input vs. Annual Parametric Target")
     fig.tight_layout()
+
+    if save:
+        save_fig(fig, "../reports/images", f"city_time_series{geocode}")
+
     plt.show()
 
 
@@ -146,9 +160,104 @@ def plot_random_phase_space(df):
     plt.show()
 
 
+def plot_phase_space(df, geocode, year, save=False, output_root="../reports/images/phase_space"):
+    """
+    Generates and saves the phase space.
+    """
+    subset = df[(df['geocode'] == geocode) & (df['year'] == year)].sort_values('time_idx')
+
+    if len(subset) < 3:
+        return
+
+    subset['lag1'] = subset['incidence'].shift(1)
+
+    fig, ax = plt.subplots(figsize=(10, 8))
+
+    sc = ax.scatter(
+        subset['incidence'],
+        subset['lag1'],
+        c=subset['week_cycle'],
+        cmap='viridis',
+        alpha=0.8,
+        edgecolor='k',
+        s=80,
+        zorder=2
+    )
+
+    ax.plot(
+        subset['incidence'],
+        subset['lag1'],
+        color='gray',
+        alpha=0.4,
+        linewidth=1,
+        zorder=1
+    )
+
+    total_cases = subset['total_cases'].iloc[0] if 'total_cases' in subset.columns else 0
+    r0 = subset['R0'].iloc[0] if 'R0' in subset.columns else 0
+
+    ax.set_title(
+        f"Phase Space Trajectory | City: {geocode} | Year: {year}\n"
+        f"Total Cases: {total_cases:.0f} | R0: {r0:.2f}",
+        fontsize=14
+    )
+    ax.set_xlabel("Incidence $x(t)$ (Weekly cases per 100k)", fontsize=12)
+    ax.set_ylabel("Lag 1 $x(t-1)$", fontsize=12)
+
+    cbar = plt.colorbar(sc, ax=ax)
+    cbar.set_label('Epidemiological Week (1-52)', rotation=270, labelpad=15)
+
+    if save:
+        filename = f"phase_{geocode}_{year}.png"
+        save_fig(fig, output_root, filename)
+        plt.close(fig)
+    else:
+        plt.show()
+
+
+def export_epidemics_batch(df, n=50, mode='top', base_dir="../reports/images/phase_space"):
+    """
+    Export in batches
+    """
+    print(f"Initializing batch exports (Mode: {mode.upper()}, N={n})...")
+
+    cols_to_keep = ['geocode', 'year', 'log_total_cases']
+    if 'muni_name' in df.columns:
+        cols_to_keep.append('muni_name')
+
+    unique_epidemics = df[cols_to_keep].drop_duplicates().copy()
+
+    if mode == 'top':
+        selection = unique_epidemics.sort_values('log_total_cases', ascending=False).head(n)
+        subfolder = "top_outbreaks"
+
+    elif mode == 'bottom':
+        selection = unique_epidemics.sort_values('log_total_cases', ascending=True).head(n)
+        subfolder = "low_activity"
+
+    elif mode == 'random':
+        selection = unique_epidemics.sample(n)
+        subfolder = "random_samples"
+    else:
+        raise ValueError("Mode must be: 'top', 'bottom', 'random'")
+
+    output_dir = os.path.join(base_dir, subfolder)
+    os.makedirs(output_dir, exist_ok=True)
+
+    for _, row in tqdm(selection.iterrows(), total=n, desc="Processing"):
+        geocode = row['geocode']
+        year = row['year']
+
+        plot_phase_space(df, geocode, year, save=True, output_root=output_dir)
+
+    print(f"Saved to: '{output_dir}'.")
+
+
 if __name__ == "__main__":
     df_final, config = load_processed_data()
-    plot_target_distributions(df_final, config['targets'])
-    analyze_tda_features(df_final)
-    visualize_single_city_series(df_final)
+    plot_target_distributions(df_final, config['targets'], save=True)
+    analyze_tda_features(df_final, save=True)
+    visualize_single_city_series(df_final, save=True)
     plot_random_phase_space(df_final)
+    export_epidemics_batch(df_final, n=20, mode='top')
+    export_epidemics_batch(df_final, n=20, mode='bottom')

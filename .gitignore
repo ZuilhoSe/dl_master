@@ -182,3 +182,4 @@ cython_debug/
 
 data/raw
 data/processed/dataset_tft_completo.csv
+data/processed/dataset_inference.parquet

@@ -8,7 +8,6 @@ package-mode = false  # <--- ADICIONE ESTA LINHA AQUI
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.13"
-torch = "*"
 pytorch-forecasting = "*"
 giotto-tda = "*"
 pandas = "*"
@@ -21,6 +20,15 @@ geopandas = "^1.1.1"
 notebook = "^7.5.0"
 pyarrow = "^22.0.0"
 torch-geometric = "^2.7.0"
+tensorboard = "^2.20.0"
+lightning = "^2.6.0"
+torch = {version = "^2.6.0", source = "pytorch_gpu"}
+torchvision = {version = "^0.21.0", source = "pytorch_gpu"}
+
+[[tool.poetry.source]]
+name = "pytorch_gpu"
+url = "https://download.pytorch.org/whl/cu124"
+priority = "explicit"
 
 [build-system]
 requires = ["poetry-core"]

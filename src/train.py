@@ -13,7 +13,6 @@ from pytorch_forecasting.metrics import MultiLoss, QuantileLoss, MAE
 torch.set_float32_matmul_precision('medium')
 warnings.filterwarnings("ignore")
 
-# --- 1. CONFIGURAÇÕES GERAIS ---
 DATA_PATH = "../data/processed/dataset_tft_completo.parquet"
 BATCH_SIZE = 64
 MAX_EPOCHS = 30
@@ -169,7 +168,7 @@ def train():
     best_model_path = trainer.checkpoint_callback.best_model_path
     print(f"Best model saved to: {best_model_path}")
 
-    best_tft = TemporalFusionTransformer.load_from_checkpoint(best_model_path)
+    best_tft = TemporalFusionTransformer.load_from_checkpoint(best_model_path, )
 
     return best_tft
 

@@ -1,0 +1,7 @@
+Experiment,Val_Loss,Best_Model_Path,Features_Removed
+1_Full_Model,1.0735200643539429,C:\Users\segun\Documents\GitHub\dl_master\src\models\checkpoints\1_Full_Model\epoch=19-val_loss=1.074.ckpt,[]
+2_No_TDA,1.2312554121017456,C:\Users\segun\Documents\GitHub\dl_master\src\models\checkpoints\2_No_TDA\epoch=18-val_loss=1.231.ckpt,"['tda_entropy_H1', 'tda_amplitude_H1']"
+3_No_Climate,1.1161201000213623,C:\Users\segun\Documents\GitHub\dl_master\src\models\checkpoints\3_No_Climate\epoch=04-val_loss=1.116.ckpt,"['temp_med', 'precip_med', 'rel_humid_med', 'enso', 'iod', 'forecast_temp_med', 'forecast_precip_tot']"
+4_No_Spatial_Identity,1.0576269626617432,C:\Users\segun\Documents\GitHub\dl_master\src\models\checkpoints\4_No_Spatial_Identity\epoch=08-val_loss=1.058.ckpt,"['uf', 'biome', 'macroregion_name', 'koppen']"
+5_No_Connectivity,1.082251787185669,C:\Users\segun\Documents\GitHub\dl_master\src\models\checkpoints\5_No_Connectivity\epoch=07-val_loss=1.082.ckpt,['num_neighbors']
+6_No_Static_Context,1.0698124170303345,C:\Users\segun\Documents\GitHub\dl_master\src\models\checkpoints\6_No_Static_Context\epoch=04-val_loss=1.070.ckpt,"['uf', 'biome', 'macroregion_name', 'koppen', 'num_neighbors', 'beta_center', 'alpha_center', 'log_total_cases_center']"

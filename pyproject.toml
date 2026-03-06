@@ -24,6 +24,7 @@ tensorboard = "^2.20.0"
 lightning = "^2.6.0"
 torch = {version = "^2.6.0", source = "pytorch_gpu"}
 torchvision = {version = "^0.21.0", source = "pytorch_gpu"}
+tabulate = "^0.10.0"
 
 [[tool.poetry.source]]
 name = "pytorch_gpu"

@@ -1,0 +1,20 @@
+embeddings {
+  tensor_name: "uf:24564"
+  metadata_path: "24564/uf\\metadata.tsv"
+  tensor_path: "24564/uf\\tensors.tsv"
+}
+embeddings {
+  tensor_name: "koppen:24564"
+  metadata_path: "24564/koppen\\metadata.tsv"
+  tensor_path: "24564/koppen\\tensors.tsv"
+}
+embeddings {
+  tensor_name: "biome:24564"
+  metadata_path: "24564/biome\\metadata.tsv"
+  tensor_path: "24564/biome\\tensors.tsv"
+}
+embeddings {
+  tensor_name: "macroregion_name:24564"
+  metadata_path: "24564/macroregion_name\\metadata.tsv"
+  tensor_path: "24564/macroregion_name\\tensors.tsv"
+}

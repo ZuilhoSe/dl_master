@@ -243,3 +243,9 @@ if __name__ == "__main__":
 
     print("\n✅ Ablation Study Concluído!")
     print(pd.DataFrame(results))
+
+
+
+    # conformal predictions
+    # dropout 
+        
